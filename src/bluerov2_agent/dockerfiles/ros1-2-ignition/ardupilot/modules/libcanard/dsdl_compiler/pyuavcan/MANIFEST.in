@@ -1,1 +1,0 @@
-recursive-include uavcan/dsdl_files *.uavcan
