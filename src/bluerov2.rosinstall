@@ -1,0 +1,21 @@
+repositories:
+  bluerov2_ignition:
+    type: git
+    url: https://github.com/vilmamuco/bluerov2_ignition.git
+    version: 6756666
+  mavros:
+    type: git
+    url: https://github.com/mavlink/mavros.git
+    version: 6a26851
+  ping360_sonar:
+    type: git
+    url: https://github.com/vilmamuco/ping360_sonar.git
+    version: fa53b8f
+  remaro_worlds:
+    type: git
+    url: https://github.com/vilmamuco/remaro_worlds.git
+    version: ign-garden
+  ros_gz:
+    type: git
+    url: https://github.com/gazebosim/ros_gz.git
+    version: 151d3d8
