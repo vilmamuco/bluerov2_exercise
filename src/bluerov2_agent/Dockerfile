@@ -27,8 +27,7 @@ RUN \
   cmake \
   wget \
   sudo \
-  ros-iron-mavros ros-iron-mavros-extras ros-iron-mavros-msgs \
-  && rm -rf /var/lib/apt/lists/
+  ros-iron-mavros ros-iron-mavros-extras ros-iron-mavros-msgs 
 
 
 ENV NVIDIA_VISIBLE_DEVICES \
@@ -62,12 +61,12 @@ USER docker
 ENV DEBIAN_FRONTEND noninteractive
 
 #--------------------------------------------Gazebo---------------------------------------------------
-RUN wget https://packages.osrfoundation.org/gazebo.gpg -O /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg
-RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
+RUN ["/bin/bash","-c","sudo wget https://packages.osrfoundation.org/gazebo.gpg -O /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg"]
+RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
 
-RUN apt update && DEBIAN_FRONTEND=noninteractive apt install -y \
+RUN sudo apt update && DEBIAN_FRONTEND=noninteractive sudo apt install -y \
   gz-garden \
-  && rm -rf /var/lib/apt/lists/
+  && sudo rm -rf /var/lib/apt/lists/
 
 #-----------------------------------------Ardupilot---------------------------------------------------
 
