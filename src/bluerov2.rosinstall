@@ -14,7 +14,7 @@ repositories:
   remaro_worlds:
     type: git
     url: https://github.com/vilmamuco/remaro_worlds.git
-    version: ign-garden
+    version: bluerov2_exercise
   ros_gz:
     type: git
     url: https://github.com/gazebosim/ros_gz.git
