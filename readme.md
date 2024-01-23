@@ -1,232 +1,209 @@
 
 # BlueRov2 exercise for the ROS2 course 
 
-This set of exercises serves to illustrate and consolidate the contents of the lectures.
-The bluerov2.py script moves the bluerov in a square the goal is to subscribe to the sonar data and calculate the height of the walls. If we have time experiment with the different modes of operation of the bluerov and the truster commands to maintain the same depth.
+The goal of this exercise is to provide a more realistic scenario of using ROS with underwater vehicles. We are going to simulate the BlueROV2 in a Gazebo environment and control it using ROS. The BlueROV2 is also equipped with a depth sensor. The depth sensor is used to measure the depth of the BlueROV2.
 
+The goal is to subscribe to the sonar data and calculate the height of the walls. If we have time experiment with the different modes of operation of the bluerov and the truster commands to maintain the same depth.
+
+
+![Gazebo](./runningGazebo.png)
 
 ## Summary
-- [Computer setup](https://github.com/remaro-network/tudelft_hackathon#setup)
-* [Installation](https://github.com/remaro-network/tudelft_hackathon#installation)
-  - [Install prerequisites to run with docker](https://github.com/remaro-network/tudelft_hackathon#install-prerequisites-to-run-with-docker)
-  - [Install locally](https://github.com/remaro-network/tudelft_hackathon#install-locally)
-- [Run it with docker via CLI](https://github.com/remaro-network/tudelft_hackathon#run-it-with-docker-via-cli)
-- [Run locally](https://github.com/remaro-network/tudelft_hackathon#run-it-locally)
-## Setup
+- [Sostware requirements](https://github.com/vilmamuco/bluerov2_exercise#sostware-requirements)
+- [Installation](https://github.com/vilmamuco/bluerov2_exercise#installation)
+- [Run it with docker](https://github.com/vilmamuco/bluerov2_exercise#how-to-run-the-package-using-docker)
+- [Run locally](https://github.com/vilmamuco/bluerov2_exercise#run-it-locally)
+- [Acknowledgements](https://github.com/vilmamuco/bluerov2_exercise#acknowledgements)
 
-Tested with:
-- Ubuntu 22.04
-- [ROS2 Iron](https://docs.ros.org/en/iron/Installation/Ubuntu-Install-Debians.html)
-- [Gazebo (Ignition) Garden](https://gazebosim.org/docs/garden/install_ubuntu)
-- [ArduPilot (Sub-4.1)](https://github.com/ArduPilot/ardupilot/tree/f2af3c7ed2907be914c41d8512654a77498d3870)
-- [ardupilot_gazebo plugin](https://github.com/ArduPilot/ardupilot_gazebo/tree/ignition-garden)
-- [mavros2](https://github.com/mavlink/mavros)
-- [remaro_world](https://github.com/vilmamuco/remaro_worlds/tree/ign-garden)
-- [bluerov2_ignition](https://github.com/vilmamuco/bluerov2_ignition.git)
+## Sostware requirements
+
+- ubuntu 22.04
+- Docker
+- Git
 
 ## Installation
 
-There are 2 options to use this repo.
-Install everything locally in your computer. This will require some effort, but when done should be easier to use.
-Run everything with docker
+It is recommended to use the docker installation method described in the next section. If however you want to install the programs directly on your computer, then follow these instructions:
 
-### Install prerequisites to run with docker
+1. Install S.I.T.L. (Software In The Loop). This is a simulatator for running ArduSub. Follow the instructions in the following [link](https://ardupilot.org/dev/docs/building-setup-linux.html#building-setup-linux)
 
-- Install docker on your machine. You can find instructions [here](https://docs.docker.com/engine/install/ubuntu/)
-- Allow non-root users to manage docker. Instructions [here](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user)
-- Install VSCode. Instructions [here](https://code.visualstudio.com/download)
-- Install [nvidia-docker](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker)(only needed if you have a nvidia GPU)
+     If you want to use MAC, follow [this instruction](https://ardupilot.org/dev/docs/building-setup-mac.html)
 
-### Install locally
-#### Install Gazebo Garden
+2. Install ROS 2 Iron. Follow the [official instructions](https://docs.ros.org/en/iron/Installation/Ubuntu-Install-Debians.html) on the documentation page.
 
-Follow the [official instructions](https://gazebosim.org/docs/garden/install_ubuntu) for installing Gazebo Garden.
+3. Install Gazebo Garden. Follow the [official instructions](https://gazebosim.org/docs/garden/install_ubuntu) for installing Gazebo Garden.
 
-#### Install ROS2 Iron
+4. Install mavros2. Follow the instructions in the following [link](https://docs.px4.io/main/en/ros/mavros_installation.html) (Binary Installation is perfectly fine).
 
-Follow the [official instructions](https://docs.ros.org/en/iron/Installation/Ubuntu-Install-Debians.html) for installing ROS2 Iron.
+5. Install ardupilot_gazebo. Follow the instructions in the following [link](https://github.com/ArduPilot/ardupilot_gazebo/)
 
-#### Install ardusub
+## How to run the package using Docker
 
-Instructions can be found [here](https://ardupilot.org/dev/docs/building-setup-linux.html#building-setup-linux)
+1. Clone the repository
+   ```Bash
+   git clone https://github.com/vilmamuco/bluerov2_exercise.git
+   cd bluerov2_exercise/src/bluerov2_agent/
+   ```
 
-**Disclaimer:**
-Problems may occur with different combinations of ArduPilot and MavROS versions.
+2. Create docker network:
 
-```Bash
-cd ~/
-git clone https://github.com/ArduPilot/ardupilot.git
-cd ardupilot
-git checkout e9f46b9
-git submodule update --init --recursive
-```
+    ```Bash
+    sudo docker network create ros_net
+    ```
 
-Note that the script used to install prerequisites available for this
-version of ArduSub does not work in Ubuntu 22.04. Therefore, you need to replace them before
-running ArduSub. To install the ArduPilot prerequisites, do the following.
+3. Run the following command in the bluerov2_agent directory or skp to step 5 to use the docker image directly.
 
-```Bash
-cd ~/ardupilot
-cd Tools/environment_install/
-rm install-prereqs-ubuntu.sh
-wget https://raw.githubusercontent.com/ArduPilot/ardupilot/master/Tools/environment_install/install-prereqs-ubuntu.sh
-cd ~/ardupilot
-chmod +x Tools/environment_install/install-prereqs-ubuntu.sh
-Tools/environment_install/install-prereqs-ubuntu.sh -y
-. ~/.profile
-```
+   ```Bash
+   docker build --build-arg UID=$(id -u) --build-arg GID=$(id -g) -t bluerov_image .
+   ```
+4. Open a new terminal and run the following command
+   If you are using an nvidia GPU run the following command:
 
-If you want to use MAC, follow [this instruction](https://ardupilot.org/dev/docs/building-setup-mac.html)
+   ```Bash
+   docker run \
+       --name=ros2_ws\
+       -it --rm \
+       -v /tmp/.X11-unix:/tmp/.X11-unix \
+       -v /mnt/wslg:/mnt/wslg \
+       -e DISPLAY \
+       -e WAYLAND_DISPLAY \
+       -e NO_AT_BRIDGE=1 \
+       -v /run/user/1000/at-spi/bus_0:/run/user/1000/at-spi/bus_0 \
+       -e XDG_RUNTIME_DIR \
+       -e PULSE_SERVER \
+       -v $(pwd):/home/ubuntu/bluerov2_exercise \
+       --gpus all \
+       bluerov_image bash
+   ```
+       
+   If using **AMD GPU** replace the `--gpus all` flag with this `--device=/dev/dri`:
 
-To test if the installation worked, run:
+   ```Bash
+   docker run \
+       --name=ros2_ws\
+       -it --rm \
+       -v /tmp/.X11-unix:/tmp/.X11-unix \
+       -v /mnt/wslg:/mnt/wslg \
+       -e DISPLAY \
+       -e WAYLAND_DISPLAY \
+       -e NO_AT_BRIDGE=1 \
+       -v /run/user/1000/at-spi/bus_0:/run/user/1000/at-spi/bus_0 \
+       -e XDG_RUNTIME_DIR \
+       -e PULSE_SERVER \
+       -v $(pwd):/home/ubuntu/bluerov2_exercise \
+       --device=/dev/dri \
+       bluerov_image bash
+   ```
+5. Run with the docker image directly
+    If you a NVIDIA GPU:
+    ```Bash
+    xhost +local:root
+    sudo docker run -it --rm --name ignition --net ros_net -e DISPLAY=$DISPLAY -e NO_AT_BRIDGE=1 -v /run/user/1000/at-spi/bus_0:/run/user/1000/at-spi/bus_0  -v /tmp/.X11-unix:/tmp/.X11-unix:ro --gpus all ghcr.io/remaro-network/tudelft_hackathon:nvidia bash
+    ```
 
-```Bash
-sim_vehicle.py -v ArduSub -L RATBeach --console --map
-```
+    If you have an AMD GPU:
+    ```Bash
+    xhost +local:root ;
+    sudo docker run -it --rm --name ignition --net ros_net -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:ro --device=/dev/dri --group-add video  ghcr.io/remaro-network/tudelft_hackathon:non-nvidia  bash
+    ```
 
-Ardupilot SITL should open and a console plus a map should appear.
+    If you have an Intel GPU:
+    ```Bash
+    xhost +local:root ;
+    sudo docker run -it --rm --name ignition --net ros_net -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:ro --device=/dev/dri:/dev/dri  ghcr.io/remaro-network/tudelft_hackathon:non-nvidia bash
+    ```
 
-**Troubleshoot**
-If you have problems with the install-prereqs-ubuntu.sh script try to install the dependencies manually with the following commands.
 
-```Bash
-pip3 install --user -U future lxml pymavlink MAVProxy pexpect flake8 geocoder empy dronecan pygame intelhex
-```
+### Running the exercise inside the Docker container
 
-```Bash
-sudo apt-get --assume-yes install build-essential ccache g++ gawk git make wget python-is-python3 libtool libxml2-dev libxslt1-dev python3-dev python3-pip python3-setuptools python3-numpy python3-pyparsing python3-psutil xterm python3-matplotlib python3-serial python3-scipy python3-opencv libcsfml-dev libcsfml-audio2.5 libcsfml-dev libcsfml-graphics2.5 libcsfml-network2.5 libcsfml-system2.5 libcsfml-window2.5 libsfml-audio2.5 libsfml-dev libsfml-graphics2.5 libsfml-network2.5 libsfml-system2.5 libsfml-window2.5 python3-yaml libpython3-stdlib python3-wxgtk4.0 fonts-freefont-ttf libfreetype6-dev libpng16-16 libportmidi-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev libsdl1.2-dev libtool-bin g++-arm-linux-gnueabihf lcov gcovr
-```
+Once the container is running, you will need to run four components inside this single container: Gazebo, ArduSub, Mavros and the ROS2 node controlling the robot.
+We are going to use 2 terminals to run everything, using a launch file.
 
-#### Install ardusub_plugin
 
-Install dependencies:
+1. Keep the terminal running the docker container open, and execute these commands within to run ardusub SITL:
+    ```Bash
+    cd /ardupilot
+    ./Tools/autotest/sim_vehicle.py -L RATBeach -v ArduSub --model=JSON --out=udp:0.0.0.0:14551  --console
+    ```
+2. Attach a second shell to the container
 
-```Bash
-sudo apt install rapidjson-dev libgz-sim7-dev
-```
-
-Clone and build repo:
-
-```Bash
-cd ~/
-git clone https://github.com/ArduPilot/ardupilot_gazebo
-cd ardupilot_gazebo
-mkdir build && cd build
-cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo
-make -j4
-```
-
-Add required paths:
-
-Assuming that you have clone the repository in `$HOME/ardupilot_gazebo`:
-```bash
-echo 'export GZ_SIM_SYSTEM_PLUGIN_PATH=$HOME/ardupilot_gazebo/build:${GZ_SIM_SYSTEM_PLUGIN_PATH}' >> ~/.bashrc
-echo 'export GZ_SIM_RESOURCE_PATH=$HOME/ardupilot_gazebo/models:$HOME/ardupilot_gazebo/worlds:${GZ_SIM_RESOURCE_PATH}' >> ~/.bashrc
-```
-
-Reload your terminal with source ~/.bashrc
-
-More info about the plugin can be found in the [repo](https://github.com/ArduPilot/ardupilot_gazebo/tree/ignition-garden)
-
-#### Install workspace
-
-Create new workspace:
-```Bash
-mkdir -p ~/bluerov2_exercise/src
-cd ~/bluerov2_exercise/
-```
-
-Clone repos:
-```Bash
-wget https://raw.githubusercontent.com/remaro-network/tudelft_hackathon/ros2/hackathon.rosinstall
-vcs import src < bluerov2.rosinstall --recursive
-```
-
-Add required paths:
-```Bash
-echo 'export GZ_SIM_RESOURCE_PATH=$HOME/bluerov2_exercise/src/bluerov2_ignition/models:$HOME/bluerov2_exercise/src/bluerov2_ignition/worlds:${GZ_SIM_RESOURCE_PATH}' >> ~/.bashrc
-
-echo 'export GZ_SIM_RESOURCE_PATH=$HOME/bluerov2_exercise/src/remaro_worlds/models:$HOME/bluerov2_exercise/src/remaro_worlds/worlds:${GZ_SIM_RESOURCE_PATH}' >> ~/.bashrc
-```
-
-Before building the `ros_gz` package (one of the dependencies), you need to export the gazebo version:
-
-```
-export GZ_VERSION="garden"
-```
-You can also add this to your `~/.bashrc` to make this process easier.
-
-Install deps:
-```Bash
-source /opt/ros/iron/setup.bash
-cd ~/bluerov2_exercise/
-rosdep install --from-paths src --ignore-src -r -y
-```
-
-Build project:
-```Bash
-cd ~/bluerov2_exercise/
-colcon build --symlink-install
-```
-
-## Run it with docker via CLI
-
-Create docker network:
-
-```Bash
-sudo docker network create ros_net
-```
-
-### Run Ignition simulation + ardupilot SITL:
-
-If you a NVIDIA GPU:
-```Bash
-xhost +local:root
-sudo docker run -it --rm --name ignition --net ros_net -e DISPLAY=$DISPLAY -e NO_AT_BRIDGE=1 -v /run/user/1000/at-spi/bus_0:/run/user/1000/at-spi/bus_0  -v /tmp/.X11-unix:/tmp/.X11-unix:ro --gpus all ghcr.io/remaro-network/tudelft_hackathon:nvidia bash
-```
-
-If you have an AMD GPU:
-```Bash
-xhost +local:root ;
-sudo docker run -it --rm --name ignition --net ros_net -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:ro --device=/dev/dri --group-add video  ghcr.io/remaro-network/tudelft_hackathon:non-nvidia  bash
-```
-
-If you have an Intel GPU:
-```Bash
-xhost +local:root ;
-sudo docker run -it --rm --name ignition --net ros_net -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:ro --device=/dev/dri:/dev/dri  ghcr.io/remaro-network/tudelft_hackathon:non-nvidia bash
-```
-
-### Development with docker via cli
-
-Mount the directory todo
+   Open a new terminal window and start a new shell inside the same docker container:
+   ```
+   docker exec -it bluerov_image bash
+   ```
+3. Run the BlueROV2, ArduSub and Mavros2
+   In the new shell, run the prepared launch file:
+   ```
+   cd /home/ubuntu/bluerov2_exercise/
+   source /opt/ros/iron/setup.bash
+   source install/setup.bash
+   colcon build --symlink-install --packages-select bluerov2_agent
+   ros2 launch bluerov2_agent bluerov_bringup.launch.py simulation:=true ardusub:=false mavros_url:='udp://127.0.0.1:14551'
+   ```
 
 ## Run it locally
 
-### Simulation
-Before running anything you need to source the workspace. With this command:
+1. Create new workspace:
+    ```Bash
+    mkdir -p ~/bluerov2_exercise/src
+    cd ~/bluerov2_exercise/
+    ```
 
-```Bash
-source ~/bluerov2_exercise/install/setup.bash
-```
+2. Clone repos:
+    ```Bash
+    git clone https://github.com/vilmamuco/bluerov2_exercise.git
+    vcs import src < ./src/bluerov2.rosinstall --recursive
+    ```
 
-Or you can add that to the ~/.bashrc file to prevent needing to source everytime.
+3. Add required paths:
+    ```Bash
+    echo 'export GZ_SIM_RESOURCE_PATH=$HOME/bluerov2_exercise/src/bluerov2_ignition/models:$HOME/bluerov2_exercise/src/bluerov2_ignition/worlds:${GZ_SIM_RESOURCE_PATH}' >> ~/.bashrc
 
-```Bash
-echo "source ~/bluerov2_exercise/install/setup.bash" >> ~/.bashrc
-```
-Don't forget to re-open your terminal after altering the `~/.bashrc` file.
+    echo 'export GZ_SIM_RESOURCE_PATH=$HOME/bluerov2_exercise/src/remaro_worlds/models:$HOME/bluerov2_exercise/src/remaro_worlds/worlds:${GZ_SIM_RESOURCE_PATH}' >> ~/.bashrc
+    ```
 
-In one terminal run ardusub SITL:
-```Bash
-./Tools/autotest/sim_vehicle.py -L RATBeach -v ArduSub --model=JSON --out=udp:0.0.0.0:14551  --console
+4. Before building the `ros_gz` package (one of the dependencies), you need to export the gazebo version:
 
-```
+    ```Bash
+    export GZ_VERSION="garden"
+    ```
+5. You can also add this to your `~/.bashrc` to make this process easier.
 
-In another terminal run the simulation + mavros + agent:
-```Bash
-ros2 launch bluerov2_agent bluerov_bringup.launch.py simulation:=true ardusub:=false mavros_url:='udp://127.0.0.1:14551'
-```
+    Install deps:
+    ```Bash
+    source /opt/ros/iron/setup.bash
+    cd ~/bluerov2_exercise/
+    rosdep install --from-paths src --ignore-src -r -y
+    ```
+
+6. Build project:
+    ```Bash
+    cd ~/bluerov2_exercise/
+    colcon build --symlink-install
+    ```
+
+7. Before running anything you need to source the workspace. With this command:
+
+    ```Bash
+    source ~/bluerov2_exercise/install/setup.bash
+    ```
+
+    Or you can add that to the ~/.bashrc file to prevent needing to source everytime.
+
+    ```Bash
+    echo "source ~/bluerov2_exercise/install/setup.bash" >> ~/.bashrc
+    ```
+    Don't forget to re-open your terminal after altering the `~/.bashrc` file.
+
+8. In one terminal run ardusub SITL:
+    ```Bash
+    ./Tools/autotest/sim_vehicle.py -L RATBeach -v ArduSub --model=JSON --out=udp:0.0.0.0:14551  --console
+    ```
+
+9. In another terminal run the simulation + mavros + agent:
+    ```Bash
+    ros2 launch bluerov2_agent bluerov_bringup.launch.py simulation:=true ardusub:=false mavros_url:='udp://127.0.0.1:14551'
+    ```
 
 ## Acknowledgements
 
