@@ -20,6 +20,12 @@ RUN \
   build-essential \
   keyboard-configuration \
   locales \
+  libboost-all-dev \
+  python3-pip \
+  python3-vcstool \
+  python3-rosdep \
+  python-is-python3 \
+  python3-colcon-common-extensions \
   tzdata \
   git \
   gnupg \
@@ -27,6 +33,7 @@ RUN \
   cmake \
   wget \
   sudo \
+  libgazebo11 \
   ros-iron-mavros ros-iron-mavros-extras ros-iron-mavros-msgs 
 
 
@@ -97,6 +104,11 @@ WORKDIR /home/docker/ardupilot/ArduSub
 
 # ardupilot gazebo plugin ---------------------------------------------------------------------------
 WORKDIR /home/docker/
+RUN ["/bin/bash", "-c", " sudo apt update \
+  && sudo apt install -y  rapidjson-dev libgz-sim7-dev  libopencv-dev protobuf-compiler \
+  && sudo rm -rf /var/lib/apt/lists/"]
+RUN export GZ_VERSION="garden"
+RUN export GZ_DIR="libgz-sim7-dev"
 #RUN git clone https://github.com/ArduPilot/ardupilot_gazebo /home/docker/ardupilot_gazebo
 RUN git clone https://github.com/vilmamuco/ardupilot_gazebo /home/docker/ardupilot_gazebo
 WORKDIR /home/docker/ardupilot_gazebo
@@ -104,25 +116,26 @@ WORKDIR /home/docker/ardupilot_gazebo
 #RUN git checkout ros2
 RUN mkdir build
 WORKDIR /home/docker/ardupilot_gazebo/build
-RUN cmake  ..
+RUN cmake  .. -DCMAKE_BUILD_TYPE=RelWithDebInfo
 RUN make -j4
-RUN sudo make install
+RUN sudo make 
 # set path of gazebo models
 ENV GZ_SIM_SYSTEM_PLUGIN_PATH=/home/docker/ardupilot_gazebo/build:${GZ_SIM_SYSTEM_PLUGIN_PATH}
 ENV GZ_SIM_RESOURCE_PATH=/home/docker/ardupilot_gazebo/models:/home/docker/ardupilot_gazebo/worlds:${GZ_SIM_RESOURCE_PATH}
 
 #-----------------------------------------ROS2 agent---------------------------------------------------
-RUN mkdir -p /home/docker/bluerov2_exercise/src
 
-WORKDIR /home/docker/bluerov2_exercise/
+WORKDIR /home/docker/
 RUN git clone https://github.com/vilmamuco/bluerov2_exercise.git
-RUN vcs import src < ./src/hackathon.rosinstall --recursive
+WORKDIR /home/docker/bluerov2_exercise/
+RUN sudo vcs import src < /home/docker/bluerov2_exercise/src/bluerov2.rosinstall --recursive
 
+RUN sudo rm -rf /etc/ros/rosdep/sources.list.d/*
 RUN ["/bin/bash", "-c", "source /opt/ros/iron/setup.bash \
   && sudo apt update \
   && sudo rosdep init \
   && rosdep update \
-  && rosdep install --from-paths src --ignore-src -r -y \
+  && sudo rosdep install --from-paths src --ignore-src -r -y \
   && sudo rm -rf /var/lib/apt/lists/"]
 
 RUN ["/bin/bash", "-c", "sudo ./src/mavros/mavros/scripts/install_geographiclib_datasets.sh"]
