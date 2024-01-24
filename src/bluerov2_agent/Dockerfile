@@ -80,7 +80,7 @@ RUN sudo apt update && DEBIAN_FRONTEND=noninteractive sudo apt install -y \
 WORKDIR /home/docker/
 RUN git clone https://github.com/ArduPilot/ardupilot.git
 WORKDIR /home/docker/ardupilot
-RUN git checkout 94ba4ec
+RUN git checkout 4ae8379616
 RUN git submodule update --init --recursive
 
 # RUN git config --global --add safe.directory /ardupilot
@@ -92,7 +92,7 @@ RUN chmod +x Tools/environment_install/install-prereqs-ubuntu.sh
 RUN USER=docker Tools/environment_install/install-prereqs-ubuntu.sh -y
 RUN . ~/.profile
 
-RUN pip3 install -U mavproxy PyYAML
+RUN sudo pip3 install -U mavproxy PyYAML
 
 ENV PATH=/opt/gcc-arm-none-eabi-10-2020-q4-major/bin:$PATH
 ENV PATH=$PATH:$HOME/docker/ardupilot/Tools/autotest
@@ -113,7 +113,7 @@ RUN export GZ_DIR="libgz-sim7-dev"
 RUN git clone https://github.com/vilmamuco/ardupilot_gazebo /home/docker/ardupilot_gazebo
 WORKDIR /home/docker/ardupilot_gazebo
 #RUN git checkout add_link
-#RUN git checkout ros2
+RUN git checkout ros2
 RUN mkdir build
 WORKDIR /home/docker/ardupilot_gazebo/build
 RUN cmake  .. -DCMAKE_BUILD_TYPE=RelWithDebInfo
@@ -124,7 +124,7 @@ ENV GZ_SIM_SYSTEM_PLUGIN_PATH=/home/docker/ardupilot_gazebo/build:${GZ_SIM_SYSTE
 ENV GZ_SIM_RESOURCE_PATH=/home/docker/ardupilot_gazebo/models:/home/docker/ardupilot_gazebo/worlds:${GZ_SIM_RESOURCE_PATH}
 
 #-----------------------------------------ROS2 agent---------------------------------------------------
-
+# test 
 WORKDIR /home/docker/
 RUN git clone https://github.com/vilmamuco/bluerov2_exercise.git
 WORKDIR /home/docker/bluerov2_exercise/
@@ -145,6 +145,7 @@ ENV GZ_VERSION="garden"
 RUN [ "/bin/bash","-c","export MAKEFLAGS='-j 1' \
   && source /opt/ros/iron/setup.bash \
   && colcon build --symlink-install"]
+RUN sudo apt-get remove modemmanager -y
 
 ENV GZ_SIM_RESOURCE_PATH=/home/docker/bluerov2_exercise/src/bluerov2_ignition/models:/home/docker/bluerov2_exercise/bluerov2_ignition/worlds:${GZ_SIM_RESOURCE_PATH}
 ENV GZ_SIM_RESOURCE_PATH=/home/docker/bluerov2_exercise/src/remaro_worlds/models:/home/docker/bluerov2_exercise/src/remaro_worlds/worlds:${GZ_SIM_RESOURCE_PATH}

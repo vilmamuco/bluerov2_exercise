@@ -137,7 +137,7 @@ We are going to use 2 terminals to run everything, using a launch file.
    source /opt/ros/iron/setup.bash
    source install/setup.bash
    colcon build --symlink-install --packages-select bluerov2_agent
-   ros2 launch bluerov2_agent bluerov_bringup.launch.py simulation:=true ardusub:=false mavros_url:='udp://127.0.0.1:14551'
+   ros2 launch tudelft_hackathon bluerov_bringup.launch.py simulation:=true ardusub:=false mavros_url:='udp://127.0.0.1:14551@14555
    ```
 
 ## Run it locally
