@@ -92,7 +92,7 @@ RUN chmod +x Tools/environment_install/install-prereqs-ubuntu.sh
 RUN USER=docker Tools/environment_install/install-prereqs-ubuntu.sh -y
 RUN . ~/.profile
 
-RUN sudo pip3 install -U mavproxy PyYAML
+RUN pip3 install -U mavproxy PyYAML
 
 ENV PATH=/opt/gcc-arm-none-eabi-10-2020-q4-major/bin:$PATH
 ENV PATH=$PATH:$HOME/docker/ardupilot/Tools/autotest
@@ -104,7 +104,7 @@ WORKDIR /home/docker/ardupilot/ArduSub
 
 # ardupilot gazebo plugin ---------------------------------------------------------------------------
 WORKDIR /home/docker/
-RUN ["/bin/bash", "-c", " sudo apt update \
+RUN ["/bin/bash", "-c", "sudo apt update \
   && sudo apt install -y  rapidjson-dev libgz-sim7-dev  libopencv-dev protobuf-compiler \
   && sudo rm -rf /var/lib/apt/lists/"]
 RUN export GZ_VERSION="garden"
@@ -118,7 +118,7 @@ RUN mkdir build
 WORKDIR /home/docker/ardupilot_gazebo/build
 RUN cmake  .. -DCMAKE_BUILD_TYPE=RelWithDebInfo
 RUN make -j4
-RUN sudo make 
+RUN make 
 # set path of gazebo models
 ENV GZ_SIM_SYSTEM_PLUGIN_PATH=/home/docker/ardupilot_gazebo/build:${GZ_SIM_SYSTEM_PLUGIN_PATH}
 ENV GZ_SIM_RESOURCE_PATH=/home/docker/ardupilot_gazebo/models:/home/docker/ardupilot_gazebo/worlds:${GZ_SIM_RESOURCE_PATH}
@@ -128,7 +128,7 @@ ENV GZ_SIM_RESOURCE_PATH=/home/docker/ardupilot_gazebo/models:/home/docker/ardup
 WORKDIR /home/docker/
 RUN git clone https://github.com/vilmamuco/bluerov2_exercise.git
 WORKDIR /home/docker/bluerov2_exercise/
-RUN sudo vcs import src < /home/docker/bluerov2_exercise/src/bluerov2.rosinstall --recursive
+RUN vcs import src < /home/docker/bluerov2_exercise/src/bluerov2.rosinstall --recursive
 
 RUN sudo rm -rf /etc/ros/rosdep/sources.list.d/*
 RUN ["/bin/bash", "-c", "source /opt/ros/iron/setup.bash \
@@ -139,7 +139,8 @@ RUN ["/bin/bash", "-c", "source /opt/ros/iron/setup.bash \
   && sudo rm -rf /var/lib/apt/lists/"]
 
 RUN ["/bin/bash", "-c", "sudo ./src/mavros/mavros/scripts/install_geographiclib_datasets.sh"]
-
+RUN ["/bin/bash", "-c", "sudo apt update \
+  && sudo apt install ros-iron-image-transport ros-iron-actuator-msgs ros-iron-angles"]
 ENV GZ_VERSION="garden"
 RUN [ "/bin/bash","-c","export MAKEFLAGS='-j 1' \
   && source /opt/ros/iron/setup.bash \

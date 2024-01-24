@@ -51,7 +51,7 @@ It is recommended to use the docker installation method described in the next se
     sudo docker network create ros_net
     ```
 
-3. Run the following command in the bluerov2_agent directory or skp to step 5 to use the docker image directly.
+3. Run the following command in the bluerov2_agent directory or **skip to step 5** to use the docker image directly.
 
    ```Bash
    docker build --build-arg UID=$(id -u) --build-arg GID=$(id -g) -t bluerov_image .
@@ -61,7 +61,7 @@ It is recommended to use the docker installation method described in the next se
 
    ```Bash
    docker run \
-       --name=ros2_ws\
+       --name=bluerov_image\
        -it --rm \
        -v /tmp/.X11-unix:/tmp/.X11-unix \
        -v /mnt/wslg:/mnt/wslg \
@@ -80,7 +80,7 @@ It is recommended to use the docker installation method described in the next se
 
    ```Bash
    docker run \
-       --name=ros2_ws\
+       --name=bluerov_image\
        -it --rm \
        -v /tmp/.X11-unix:/tmp/.X11-unix \
        -v /mnt/wslg:/mnt/wslg \
@@ -98,19 +98,19 @@ It is recommended to use the docker installation method described in the next se
     If you a NVIDIA GPU:
     ```Bash
     xhost +local:root
-    sudo docker run -it --rm --name ignition --net ros_net -e DISPLAY=$DISPLAY -e NO_AT_BRIDGE=1 -v /run/user/1000/at-spi/bus_0:/run/user/1000/at-spi/bus_0  -v /tmp/.X11-unix:/tmp/.X11-unix:ro --gpus all ghcr.io/remaro-network/tudelft_hackathon:nvidia bash
+    sudo docker run -it --rm --name bluerov_image --net ros_net -e DISPLAY=$DISPLAY -e NO_AT_BRIDGE=1 -v /run/user/1000/at-spi/bus_0:/run/user/1000/at-spi/bus_0  -v /tmp/.X11-unix:/tmp/.X11-unix:ro --gpus all ghcr.io/remaro-network/tudelft_hackathon:nvidia bash
     ```
 
     If you have an AMD GPU:
     ```Bash
     xhost +local:root ;
-    sudo docker run -it --rm --name ignition --net ros_net -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:ro --device=/dev/dri --group-add video  ghcr.io/remaro-network/tudelft_hackathon:non-nvidia  bash
+    sudo docker run -it --rm --name bluerov_image --net ros_net -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:ro --device=/dev/dri --group-add video  ghcr.io/remaro-network/tudelft_hackathon:non-nvidia  bash
     ```
 
     If you have an Intel GPU:
     ```Bash
     xhost +local:root ;
-    sudo docker run -it --rm --name ignition --net ros_net -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:ro --device=/dev/dri:/dev/dri  ghcr.io/remaro-network/tudelft_hackathon:non-nvidia bash
+    sudo docker run -it --rm --name bluerov_image --net ros_net -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:ro --device=/dev/dri:/dev/dri  ghcr.io/remaro-network/tudelft_hackathon:non-nvidia bash
     ```
 
 
@@ -122,7 +122,7 @@ We are going to use 2 terminals to run everything, using a launch file.
 
 1. Keep the terminal running the docker container open, and execute these commands within to run ardusub SITL:
     ```Bash
-    cd /ardupilot
+    cd /home/docker/ardupilot
     ./Tools/autotest/sim_vehicle.py -L RATBeach -v ArduSub --model=JSON --out=udp:0.0.0.0:14551  --console
     ```
 2. Attach a second shell to the container
@@ -134,7 +134,6 @@ We are going to use 2 terminals to run everything, using a launch file.
 3. Run the BlueROV2, ArduSub and Mavros2
    In the new shell, run the prepared launch file:
    ```
-   cd /home/ubuntu/bluerov2_exercise/
    source /opt/ros/iron/setup.bash
    source install/setup.bash
    colcon build --symlink-install --packages-select bluerov2_agent
@@ -207,4 +206,4 @@ We are going to use 2 terminals to run everything, using a launch file.
 
 ## Acknowledgements
 
-This repository is a simplified version of the REMARO Summer School Delft 2022 - Underwater robotics hackathon. For more info, please visit: <a href="https://github.com/remaro-network/tudelft_hackathon.git"> remaro-network/tudelft_hackathon
+This repository is mostly based on the REMARO Summer School Delft 2022 - Underwater robotics hackathon and the BlueRov-ROS-playground repository. For more info, please visit: <a href="https://github.com/remaro-network/tudelft_hackathon.git"> remaro-network/tudelft_hackathon</a> and https://github.com/patrickelectric/bluerov_ros_playground.git
