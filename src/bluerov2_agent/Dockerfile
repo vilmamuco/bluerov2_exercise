@@ -125,11 +125,9 @@ ENV GZ_SIM_RESOURCE_PATH=/home/docker/ardupilot_gazebo/models:/home/docker/ardup
 
 #-----------------------------------------ROS2 agent---------------------------------------------------
 # test 
-WORKDIR /home/docker/
-RUN git clone https://github.com/vilmamuco/bluerov2_exercise.git
+COPY --chown=docker:docker . /home/docker/bluerov2_exercise/src/bluerov2_agent
 WORKDIR /home/docker/bluerov2_exercise/
-WORKDIR /home/docker/bluerov2_exercise/
-RUN vcs import src < /home/docker/bluerov2_exercise/src/bluerov2.rosinstall --recursive
+RUN vcs import src < /home/docker/bluerov2_exercise/src/bluerov2_agent/bluerov2.rosinstall --recursive
 
 RUN sudo rm -rf /etc/ros/rosdep/sources.list.d/*
 RUN ["/bin/bash", "-c", "source /opt/ros/iron/setup.bash \
