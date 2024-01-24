@@ -54,14 +54,14 @@ It is recommended to use the docker installation method described in the next se
 3. Run the following command in the bluerov2_agent directory or **skip to step 5** to use the docker image directly.
 
    ```Bash
-   docker build --build-arg UID=$(id -u) --build-arg GID=$(id -g) -t bluerov_image .
+   docker build --build-arg UID=$(id -u) --build-arg GID=$(id -g) -t vilmamuco/bluerov2:latest .
    ```
 4. Open a new terminal and run the following command
    If you are using an nvidia GPU run the following command:
 
    ```Bash
    docker run \
-       --name=bluerov_image\
+       --name=bluerov_container\
        -it --rm \
        -v /tmp/.X11-unix:/tmp/.X11-unix \
        -v /mnt/wslg:/mnt/wslg \
@@ -73,14 +73,14 @@ It is recommended to use the docker installation method described in the next se
        -e PULSE_SERVER \
        -v $(pwd):/home/ubuntu/bluerov2_exercise \
        --gpus all \
-       bluerov_image bash
+       vilmamuco/bluerov2:latest bash
    ```
        
    If using **AMD GPU** replace the `--gpus all` flag with this `--device=/dev/dri`:
 
    ```Bash
    docker run \
-       --name=bluerov_image\
+       --name=bluerov_container\
        -it --rm \
        -v /tmp/.X11-unix:/tmp/.X11-unix \
        -v /mnt/wslg:/mnt/wslg \
@@ -92,25 +92,25 @@ It is recommended to use the docker installation method described in the next se
        -e PULSE_SERVER \
        -v $(pwd):/home/ubuntu/bluerov2_exercise \
        --device=/dev/dri \
-       bluerov_image bash
+       vilmamuco/bluerov2:latest bash
    ```
 5. Run with the docker image directly
     If you a NVIDIA GPU:
     ```Bash
     xhost +local:root
-    sudo docker run -it --rm --name bluerov_image --net ros_net -e DISPLAY=$DISPLAY -e NO_AT_BRIDGE=1 -v /run/user/1000/at-spi/bus_0:/run/user/1000/at-spi/bus_0  -v /tmp/.X11-unix:/tmp/.X11-unix:ro --gpus all ghcr.io/remaro-network/tudelft_hackathon:nvidia bash
+    sudo docker run -it --rm --name bluerov_container --net ros_net -e DISPLAY=$DISPLAY -e NO_AT_BRIDGE=1 -v /run/user/1000/at-spi/bus_0:/run/user/1000/at-spi/bus_0  -v /tmp/.X11-unix:/tmp/.X11-unix:ro --gpus all vilmamuco/bluerov2:latest bash
     ```
 
     If you have an AMD GPU:
     ```Bash
     xhost +local:root ;
-    sudo docker run -it --rm --name bluerov_image --net ros_net -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:ro --device=/dev/dri --group-add video  ghcr.io/remaro-network/tudelft_hackathon:non-nvidia  bash
+    sudo docker run -it --rm --name bluerov_container --net ros_net -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:ro --device=/dev/dri --group-add video  vilmamuco/bluerov2:latest  bash
     ```
 
     If you have an Intel GPU:
     ```Bash
     xhost +local:root ;
-    sudo docker run -it --rm --name bluerov_image --net ros_net -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:ro --device=/dev/dri:/dev/dri  ghcr.io/remaro-network/tudelft_hackathon:non-nvidia bash
+    sudo docker run -it --rm --name bluerov_container --net ros_net -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:ro --device=/dev/dri:/dev/dri  vilmamuco/bluerov2:latest bash
     ```
 
 
@@ -129,7 +129,7 @@ We are going to use 2 terminals to run everything, using a launch file.
 
    Open a new terminal window and start a new shell inside the same docker container:
    ```
-   docker exec -it bluerov_image bash
+   docker exec -it bluerov_container bash
    ```
 3. Run the BlueROV2, ArduSub and Mavros2
    In the new shell, run the prepared launch file:
@@ -137,7 +137,7 @@ We are going to use 2 terminals to run everything, using a launch file.
    source /opt/ros/iron/setup.bash
    source install/setup.bash
    colcon build --symlink-install --packages-select bluerov2_agent
-   ros2 launch tudelft_hackathon bluerov_bringup.launch.py simulation:=true ardusub:=false mavros_url:='udp://127.0.0.1:14551@14555
+   ros2 launch bluerov2_agent bluerov_bringup.launch.py simulation:=true ardusub:=false mavros_url:='udp://127.0.0.1:14551@14555
    ```
 
 ## Run it locally
