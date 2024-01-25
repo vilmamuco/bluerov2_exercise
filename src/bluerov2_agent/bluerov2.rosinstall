@@ -6,7 +6,7 @@ repositories:
   mavros:
     type: git
     url: https://github.com/mavlink/mavros.git
-    version: 3e1adc7
+    version: 6a26851
   ping360_sonar:
     type: git
     url: https://github.com/vilmamuco/ping360_sonar.git

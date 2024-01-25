@@ -127,6 +127,7 @@ ENV GZ_SIM_RESOURCE_PATH=/home/docker/ardupilot_gazebo/models:/home/docker/ardup
 # test 
 COPY --chown=docker:docker . /home/docker/bluerov2_exercise/src/bluerov2_agent
 WORKDIR /home/docker/bluerov2_exercise/
+
 RUN vcs import src < /home/docker/bluerov2_exercise/src/bluerov2_agent/bluerov2.rosinstall --recursive
 
 RUN sudo rm -rf /etc/ros/rosdep/sources.list.d/*
