@@ -51,7 +51,11 @@ It is recommended to use the docker installation method described in the next se
     sudo docker network create ros_net
     ```
 
-3. Run the following command in the bluerov2_agent directory or **skip to step 5** to use the docker image directly.
+3. Run the following command in the bluerov2_exercise directory or **skip to step 5** to use the docker image directly.
+
+     ```Bash
+    cd bluerov2_exercise/
+    ```
 
    ```Bash
    docker build --build-arg UID=$(id -u) --build-arg GID=$(id -g) -t vilmamuco/bluerov2:latest .
@@ -90,7 +94,7 @@ It is recommended to use the docker installation method described in the next se
        -v /run/user/1000/at-spi/bus_0:/run/user/1000/at-spi/bus_0 \
        -e XDG_RUNTIME_DIR \
        -e PULSE_SERVER \
-       -v $(pwd):/home/ubuntu/bluerov2_exercise \
+       -v $(pwd)/src/bluerov2_agent:/home/docker/bluerov2_exercise/src/bluerov2_agent  \
        --device=/dev/dri \
        vilmamuco/bluerov2:latest bash
    ```
@@ -98,17 +102,20 @@ It is recommended to use the docker installation method described in the next se
     If you a NVIDIA GPU:
     ```Bash
     xhost +local:root
+    chmod 777 /tmp/.X11-unix/X[0-1]
     sudo docker run -it --rm --name bluerov_container --net ros_net -e DISPLAY=$DISPLAY -e NO_AT_BRIDGE=1 -v /run/user/1000/at-spi/bus_0:/run/user/1000/at-spi/bus_0  -v /tmp/.X11-unix:/tmp/.X11-unix:ro --gpus all vilmamuco/bluerov2:latest bash
     ```
 
     If you have an AMD GPU:
     ```Bash
+    chmod 777 /tmp/.X11-unix/X[0-1]
     xhost +local:root ;
     sudo docker run -it --rm --name bluerov_container --net ros_net -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:ro --device=/dev/dri --group-add video  vilmamuco/bluerov2:latest  bash
     ```
 
     If you have an Intel GPU:
     ```Bash
+    chmod 777 /tmp/.X11-unix/X[0-1]
     xhost +local:root ;
     sudo docker run -it --rm --name bluerov_container --net ros_net -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:ro --device=/dev/dri:/dev/dri  vilmamuco/bluerov2:latest bash
     ```
